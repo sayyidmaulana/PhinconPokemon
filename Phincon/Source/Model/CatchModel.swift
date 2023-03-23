@@ -11,7 +11,7 @@ import CoreData
 
 class CatchProvider {
     private func newTaskContext() -> NSManagedObjectContext {
-        let appDelegate = UIApplication.shared.delegate as! SceneDelegate
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let taskContext = appDelegate.persistentContainer.newBackgroundContext()
         taskContext.undoManager = nil
         
@@ -22,7 +22,7 @@ class CatchProvider {
     func getAllData(completion: @escaping(_ members: [Response]) -> ()){
         let taskContext = newTaskContext()
         taskContext.perform {
-            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "FavoriteModel")
+            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Phincon")
             do {
                 let results = try taskContext.fetch(fetchRequest)
                 var members: [Response] = []
@@ -45,7 +45,7 @@ class CatchProvider {
     func getData(_ id: Int, completion: @escaping(_ members: Response) -> ()){
         let taskContext = newTaskContext()
         taskContext.perform {
-            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "FavoriteModel")
+            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Phincon")
             fetchRequest.fetchLimit = 1
             fetchRequest.predicate = NSPredicate(format: "id == \(id)")
             do {
@@ -64,16 +64,13 @@ class CatchProvider {
         }
     }
     
-    func createData(_ id:Int, _ name:String, _ released:String, _ background_image:String, _ rating_top:Int, completion: @escaping() -> ()){
+    func createData(_ name:String,_ url:String, completion: @escaping() -> ()){
         let taskContext = newTaskContext()
         taskContext.performAndWait {
-            if let entity = NSEntityDescription.entity(forEntityName: "FavoriteModel", in: taskContext) {
+            if let entity = NSEntityDescription.entity(forEntityName: "Phincon", in: taskContext) {
                 let member = NSManagedObject(entity: entity, insertInto: taskContext)
-                member.setValue(id, forKeyPath: "id")
                 member.setValue(name, forKeyPath: "name")
-                member.setValue(released, forKeyPath: "released")
-                member.setValue(background_image, forKeyPath: "backgroundImage")
-                member.setValue(rating_top, forKeyPath: "ratingsCount")
+                member.setValue(url, forKeyPath: "url")
                 do {
                     try taskContext.save()
                     completion()
@@ -84,12 +81,12 @@ class CatchProvider {
         }
     }
 
-     func deleteData(_ id: Int, completion: @escaping() -> ()){
+     func deleteData(_ name: String, completion: @escaping() -> ()){
         let taskContext = newTaskContext()
         taskContext.perform {
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "FavoriteModel")
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Phincon")
             fetchRequest.fetchLimit = 1
-            fetchRequest.predicate = NSPredicate(format: "id == \(id)")
+            fetchRequest.predicate = NSPredicate(format: "name == \(name)")
             let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
             batchDeleteRequest.resultType = .resultTypeCount
             if let batchDeleteResult = try? taskContext.execute(batchDeleteRequest) as? NSBatchDeleteResult,

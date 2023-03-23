@@ -10,6 +10,7 @@ import UIKit
 class DummyPokemonCell: UITableViewCell {
 
     @IBOutlet weak var pokemonLabel: UILabel!
+    @IBOutlet weak var imagePokemon: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -24,6 +25,8 @@ class DummyPokemonCell: UITableViewCell {
     
     func setData(data: Response) {
         pokemonLabel.text = "Hello I am \(data.name ?? "" )"
+        guard let thumb = data.url else { return }
+        imagePokemon.loadImage(using: thumb)
     }
     
 }

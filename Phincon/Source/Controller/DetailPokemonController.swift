@@ -6,12 +6,15 @@
 //
 
 import UIKit
+import CoreData
 
 class DetailPokemonController: UIViewController {
 
     var name = ""
     
     var pokemonDetail: DetailPokemonResponse? = nil
+    lazy var gamesProvider: CatchProvider = { return CatchProvider() }()
+    var there = false
     
     lazy var imgMenu: UIImageView = {
         let imgViewMenu = UIImageView()
@@ -27,6 +30,30 @@ class DetailPokemonController: UIViewController {
         return textViewMenu
     }()
     
+    lazy var love: UIButton = {
+       let button = UIButton(type: .system)
+       button.layer.shadowOpacity = 0.5
+       button.layer.shadowOffset = CGSize(width: 2, height: 2)
+       button.layer.shadowRadius = 5.0
+       button.layer.shadowColor = UIColor.black.cgColor
+       button.setImage(UIImage(named: "heart.square.fill"), for: .normal)
+        button.tintColor = .red
+       button.addTarget(self, action: #selector(self.catchPokemon), for: .touchUpInside)
+       return button
+   }()
+    
+    lazy var loveButton: UIButton = {
+       let button = UIButton(type: .system)
+       button.layer.shadowOpacity = 0.5
+       button.layer.shadowOffset = CGSize(width: 2, height: 2)
+       button.layer.shadowRadius = 5.0
+       button.layer.shadowColor = UIColor.black.cgColor
+       button.setImage(UIImage(named: "heart.square"), for: .normal)
+        button.tintColor = .gray
+       button.addTarget(self, action: #selector(self.catchPokemon), for: .touchUpInside)
+       return button
+   }()
+    
     var spinner = UIActivityIndicatorView(style: .large)
     
     override func viewDidLoad() {
@@ -38,7 +65,72 @@ class DetailPokemonController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
+    @objc func catchPokemon() {
+        
+        if self.there {
+        DispatchQueue.main.async {
+            self.view.addSubview(self.love)
+            self.love.setAnchor(top: self.imgMenu.topAnchor, left: nil, bottom: nil, right: self.imgMenu.trailingAnchor, paddingTop: 100, paddingLeft: 0, paddingBottom: 0, paddingRight: 28, width: 40, height: 40)
+            }
+        } else {
+            DispatchQueue.main.async {
+            self.view.addSubview(self.loveButton)
+        self.loveButton.setAnchor(top: self.imgMenu.topAnchor, left: nil, bottom: nil, right: self.imgMenu.trailingAnchor, paddingTop: 100, paddingLeft: 0, paddingBottom: 0, paddingRight: 28, width: 40, height: 40)
+            }
+        }
+        
+//        if self.there {
+//
+//            gamesProvider.deleteData(pokemonDetail?.name ?? "") {
+//                DispatchQueue.main.async {
+//                    self.showAlert(controller: self, message: "Data berhasil dihapus", seconds: 1)
+//                    self.there = false
+//                    let btnRight = UIBarButtonItem(image: UIImage(named: "heart.square"), style: .plain, target: self, action: #selector(self.catchPokemon))
+//                    self.navigationItem.rightBarButtonItem = btnRight
+//                    btnRight.tintColor = .gray
+//                }
+//            }
+//            print("false clicked")
+//
+//        } else {
+//
+//            gamesProvider.createData(pokemonDetail?.name ?? "", pokemonDetail?.name ?? "") {
+//                DispatchQueue.main.async {
+//                    self.showAlert(controller: self, message: "Data berhasil disimpan", seconds: 1)
+//                    self.there = true
+//                    let btnRight = UIBarButtonItem(image: UIImage(named: "heart.square.fill"), style: .plain, target: self, action: #selector(self.catchPokemon))
+//                    self.navigationItem.rightBarButtonItem = btnRight
+//                    btnRight.tintColor = .red
+//                }
+//            }
+//            print("true clicked")
+//
+//        }
+        
+    }
+    
+    func showAlert(controller: UIViewController, message : String, seconds: Double){
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.view.backgroundColor = .darkGray
+        alert.view.alpha = 0.7
+        alert.view.layer.cornerRadius = 10
+        
+        controller.present(alert, animated: true)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + seconds) {
+            alert.dismiss(animated: true)
+        }
+    }
+    
+    private func getData() {
+        
+        
+        
+    }
+    
     private func setupView() {
+        let btnRight = UIBarButtonItem(image: UIImage(named: "heart.square"), style: .plain, target: self, action: #selector(self.catchPokemon))
+        navigationItem.rightBarButtonItem = btnRight
+        
         view.addSubview(imgMenu)
         imgMenu.setAnchor(top: view.topAnchor, left: view.leadingAnchor, bottom: nil, right: view.trailingAnchor, paddingTop: 18, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: view.frame.width * 8 / 2, height: 300)
         view.addSubview(textMenu)
